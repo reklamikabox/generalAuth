@@ -3,9 +3,9 @@
 // Примеры "зашифрованных" строк (здесь — base64).
 // Ниже будет функция decrypt, которая расшифрует их.
 const encryptedSupabaseUrl =
-  "aHR0cHM6Ly9pZnh4cnRtYmxyaHJkaGgueXlucS5zdXBhYmFzZS5jby8=";
+  "aHR0cHM6Ly9sY2ZjZXFtamp2enZ3aGR0dHVpaS5zdXBhYmFzZS5jbw==";
 const encryptedSupabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...SWZleHhydG1ibHJocmRoaG55eW5x...";
+  "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW14alptTmxjVzFxYW5aNmRuZG9aSFIwZFdscElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTXprMU5EUTFPVFVzSW1WNGNDSTZNakExTlRFeU1EVTVOWDAuMlduTjFHVlFUTzF5UFAzRGdreDVzSTJ4SUVtbXk2Y0tlMnRiRDJ2Mmd6aw==";
 // Замените на реальный зашифрованный ключ
 // (Выглядит урезанным, т.к. для примера; на практике вставьте полный base64)
 
