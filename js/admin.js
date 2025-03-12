@@ -47,9 +47,10 @@ const editUserForm = document.getElementById("editUserForm");
 const editUsernameInput = document.getElementById("editUsername");
 const loadUserBtn = document.getElementById("loadUserBtn");
 const editFieldsDiv = document.getElementById("editFields");
-const editPasswordInput = document.getElementById("editPassword");
-const editCreatedInput = document.getElementById("editCreated");
-const editActiveInput = document.getElementById("editActive");
+/* СТАРЫЙ КОД (жёстко привязанные к определённым полям) */
+// const editPasswordInput = document.getElementById("editPassword");
+// const editCreatedInput = document.getElementById("editCreated");
+// const editActiveInput = document.getElementById("editActive");
 const deleteUserBtn = document.getElementById("deleteUserBtn");
 
 const adminMessage = document.getElementById("adminMessage");
@@ -257,14 +258,42 @@ loadUserBtn.addEventListener("click", async () => {
       return;
     }
 
-    // Заполняем поля
+    // СТАРАЯ ЛОГИКА (жёстко завязана на поля password, created_at, active):
+    /*
     editPasswordInput.value = data.password || "";
     editCreatedInput.value = data.created_at
       ? data.created_at.substring(0, 10)
       : "";
     editActiveInput.checked = !!data.active;
+    editFieldsDiv.classList.remove("hidden");
+    */
+
+    // ----- НОВЫЙ КОД: динамическая генерация всех полей -----
+    editFieldsDiv.innerHTML = ""; // очищаем блок перед созданием полей
+
+    // Для каждого ключа (названия колонки) создаём input
+    for (const colName in data) {
+      // Обёртка (label)
+      const label = document.createElement("label");
+      label.style.display = "block"; // чтобы каждый label был на отдельной строке
+
+      label.textContent = colName + ": ";
+
+      // Само поле ввода
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = data[colName] !== null && data[colName] !== undefined
+        ? data[colName]
+        : "";
+      // Сохраним название колонки в data-атрибуте
+      input.setAttribute("data-col", colName);
+
+      label.appendChild(input);
+      editFieldsDiv.appendChild(label);
+    }
 
     editFieldsDiv.classList.remove("hidden");
+    adminMessage.textContent = "Данные пользователя загружены!";
   } catch (err) {
     console.error("Ошибка при загрузке пользователя:", err);
     adminMessage.textContent = "Ошибка при загрузке данных.";
@@ -276,12 +305,25 @@ editUserForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!currentTableName) return;
   const usernameToEdit = editUsernameInput.value.trim();
+  if (!usernameToEdit) return;
 
+  // СТАРЫЙ КОД (обновлялись только password и active):
+  /*
   const updates = {};
   if (editPasswordInput.value) {
     updates.password = editPasswordInput.value;
   }
   updates.active = editActiveInput.checked;
+  */
+
+  // ----- НОВЫЙ КОД: собираем данные динамически со всех input'ов -----
+  const inputs = editFieldsDiv.querySelectorAll("input[data-col]");
+  const updates = {};
+
+  inputs.forEach((input) => {
+    const colName = input.getAttribute("data-col");
+    updates[colName] = input.value;
+  });
 
   try {
     const { data, error } = await supabase
@@ -298,9 +340,7 @@ editUserForm.addEventListener("submit", async (e) => {
     adminMessage.textContent = "Пользователь успешно обновлён!";
     // Очищаем поля
     editUsernameInput.value = "";
-    editPasswordInput.value = "";
-    editCreatedInput.value = "";
-    editActiveInput.checked = false;
+    editFieldsDiv.innerHTML = "";
     editFieldsDiv.classList.add("hidden");
 
     loadUsersTable(currentTableName);
@@ -333,9 +373,7 @@ deleteUserBtn.addEventListener("click", async () => {
     adminMessage.textContent = "Пользователь удалён!";
     // Очищаем поля
     editUsernameInput.value = "";
-    editPasswordInput.value = "";
-    editCreatedInput.value = "";
-    editActiveInput.checked = false;
+    editFieldsDiv.innerHTML = "";
     editFieldsDiv.classList.add("hidden");
 
     loadUsersTable(currentTableName);
