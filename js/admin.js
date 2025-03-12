@@ -42,18 +42,31 @@ const addUserForm = document.getElementById("addUserForm");
 const newUsernameInput = document.getElementById("newUsername");
 const newPasswordInput = document.getElementById("newPassword");
 
-// Форма редактирования пользователя
+// *** СТАРАЯ ЛОГИКА ДЛЯ РЕДАКТИРОВАНИЯ (прежние поля) ***
+// const editUserForm = document.getElementById("editUserForm");
+// const editUsernameInput = document.getElementById("editUsername");
+// const loadUserBtn = document.getElementById("loadUserBtn");
+// const editFieldsDiv = document.getElementById("editFields");
+// const editPasswordInput = document.getElementById("editPassword");
+// const editCreatedInput = document.getElementById("editCreated");
+// const editActiveInput = document.getElementById("editActive");
+// const deleteUserBtn = document.getElementById("deleteUserBtn");
+
+// Но нам всё равно нужны эти селекторы для новой логики,
+// поэтому раскомментируем, но некоторые используем лишь частично:
 const editUserForm = document.getElementById("editUserForm");
 const editUsernameInput = document.getElementById("editUsername");
 const loadUserBtn = document.getElementById("loadUserBtn");
 const editFieldsDiv = document.getElementById("editFields");
-/* СТАРЫЙ КОД (жёстко привязанные к определённым полям) */
 // const editPasswordInput = document.getElementById("editPassword");
 // const editCreatedInput = document.getElementById("editCreated");
 // const editActiveInput = document.getElementById("editActive");
 const deleteUserBtn = document.getElementById("deleteUserBtn");
 
 const adminMessage = document.getElementById("adminMessage");
+
+// Контейнер для динамических полей редактирования
+const dynamicFieldsContainer = document.getElementById("dynamicFieldsContainer");
 
 // Текущее выбранное название таблицы
 let currentTableName = null;
@@ -119,37 +132,6 @@ async function loadUsersTable(tableName) {
     if (error) {
       throw error;
     }
-
-    // --- СТАРЫЙ КОД (жёстко завязан на конкретные столбцы) ---
-    /*
-    // Очищаем таблицу
-    usersTableBody.innerHTML = "";
-
-    // Заполняем новыми данными
-    data.forEach((user) => {
-      const tr = document.createElement("tr");
-
-      const tdUsername = document.createElement("td");
-      tdUsername.textContent = user.username;
-      tr.appendChild(tdUsername);
-
-      const tdCreated = document.createElement("td");
-      tdCreated.textContent = user.created_at
-        ? user.created_at.substring(0, 10)
-        : "";
-      tr.appendChild(tdCreated);
-
-      const tdActive = document.createElement("td");
-      tdActive.textContent = user.active ? "Да" : "Нет";
-      tr.appendChild(tdActive);
-
-      const tdActions = document.createElement("td");
-      tdActions.textContent = "—"; // Можно сделать кнопки (Редактировать/Удалить)
-      tr.appendChild(tdActions);
-
-      usersTableBody.appendChild(tr);
-    });
-    */
 
     // --- НОВЫЙ КОД: динамическое получение всех столбцов ---
     // Очищаем tbody
@@ -245,6 +227,7 @@ loadUserBtn.addEventListener("click", async () => {
 
   adminMessage.textContent = "";
   editFieldsDiv.classList.add("hidden");
+  dynamicFieldsContainer.innerHTML = ""; // Очищаем динамические поля
 
   try {
     const { data, error } = await supabase
@@ -258,42 +241,57 @@ loadUserBtn.addEventListener("click", async () => {
       return;
     }
 
-    // СТАРАЯ ЛОГИКА (жёстко завязана на поля password, created_at, active):
+    // *** СТАРЫЙ КОД (жёстко завязан на password, created_at, active) ***
     /*
-    editPasswordInput.value = data.password || "";
-    editCreatedInput.value = data.created_at
-      ? data.created_at.substring(0, 10)
-      : "";
-    editActiveInput.checked = !!data.active;
-    editFieldsDiv.classList.remove("hidden");
+    // editPasswordInput.value = data.password || "";
+    // editCreatedInput.value = data.created_at
+    //   ? data.created_at.substring(0, 10)
+    //   : "";
+    // editActiveInput.checked = !!data.active;
+    // editFieldsDiv.classList.remove("hidden");
     */
 
-    // ----- НОВЫЙ КОД: динамическая генерация всех полей -----
-    editFieldsDiv.innerHTML = ""; // очищаем блок перед созданием полей
+    // --- НОВЫЙ КОД: динамическая генерация полей ---
+    // Пройдёмся по всем ключам объекта data и создадим инпуты
+    for (const columnName in data) {
+      // Создаём обёртку (div или label)
+      const fieldWrapper = document.createElement("div");
+      fieldWrapper.style.marginBottom = "8px";
 
-    // Для каждого ключа (названия колонки) создаём input
-    for (const colName in data) {
-      // Обёртка (label)
+      // Создаём подпись (label)
       const label = document.createElement("label");
-      label.style.display = "block"; // чтобы каждый label был на отдельной строке
+      label.textContent = columnName + ": ";
 
-      label.textContent = colName + ": ";
-
-      // Само поле ввода
+      // Создаём input (для упрощения всё text, но можно делать разные типы в зависимости от данных)
       const input = document.createElement("input");
       input.type = "text";
-      input.value = data[colName] !== null && data[colName] !== undefined
-        ? data[colName]
+      input.name = columnName;
+      // Если хотите чуть "умнее" определять тип, раскомментируйте и допишите логику
+      /*
+      if (typeof data[columnName] === "boolean") {
+        input.type = "checkbox";
+        input.checked = !!data[columnName];
+      } else if (columnName === "created_at") {
+        input.type = "date";
+        if (data[columnName]) {
+          input.value = data[columnName].substring(0, 10);
+        }
+      } else {
+        input.type = "text";
+      }
+      */
+      // Пока делаем универсально как текст
+      input.value = data[columnName] !== null && data[columnName] !== undefined
+        ? data[columnName]
         : "";
-      // Сохраним название колонки в data-атрибуте
-      input.setAttribute("data-col", colName);
 
       label.appendChild(input);
-      editFieldsDiv.appendChild(label);
+      fieldWrapper.appendChild(label);
+      dynamicFieldsContainer.appendChild(fieldWrapper);
     }
 
+    // Показываем блок редактирования
     editFieldsDiv.classList.remove("hidden");
-    adminMessage.textContent = "Данные пользователя загружены!";
   } catch (err) {
     console.error("Ошибка при загрузке пользователя:", err);
     adminMessage.textContent = "Ошибка при загрузке данных.";
@@ -305,9 +303,8 @@ editUserForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!currentTableName) return;
   const usernameToEdit = editUsernameInput.value.trim();
-  if (!usernameToEdit) return;
 
-  // СТАРЫЙ КОД (обновлялись только password и active):
+  // *** СТАРЫЙ КОД ***
   /*
   const updates = {};
   if (editPasswordInput.value) {
@@ -316,16 +313,28 @@ editUserForm.addEventListener("submit", async (e) => {
   updates.active = editActiveInput.checked;
   */
 
-  // ----- НОВЫЙ КОД: собираем данные динамически со всех input'ов -----
-  const inputs = editFieldsDiv.querySelectorAll("input[data-col]");
+  // --- НОВЫЙ КОД: собрать данные из dynamicFieldsContainer ---
   const updates = {};
-
+  const inputs = dynamicFieldsContainer.querySelectorAll("input");
   inputs.forEach((input) => {
-    const colName = input.getAttribute("data-col");
-    updates[colName] = input.value;
+    const fieldName = input.name;
+    // Если у нас были поля checkbox/boolean — нужно учитывать (по желанию)
+    // Пока считаем, что всё текст:
+    updates[fieldName] = input.value;
+
+    // Если хотим поддерживать checkbox:
+    /*
+    if (input.type === "checkbox") {
+      updates[fieldName] = input.checked;
+    } else {
+      updates[fieldName] = input.value;
+    }
+    */
   });
 
   try {
+    // Обратите внимание: критерий обновления — eq("username", usernameToEdit)
+    // Вы можете заменить на другой столбец, если нужно
     const { data, error } = await supabase
       .from(currentTableName)
       .update(updates)
@@ -338,10 +347,11 @@ editUserForm.addEventListener("submit", async (e) => {
     }
 
     adminMessage.textContent = "Пользователь успешно обновлён!";
+
     // Очищаем поля
     editUsernameInput.value = "";
-    editFieldsDiv.innerHTML = "";
     editFieldsDiv.classList.add("hidden");
+    dynamicFieldsContainer.innerHTML = "";
 
     loadUsersTable(currentTableName);
   } catch (err) {
@@ -373,8 +383,8 @@ deleteUserBtn.addEventListener("click", async () => {
     adminMessage.textContent = "Пользователь удалён!";
     // Очищаем поля
     editUsernameInput.value = "";
-    editFieldsDiv.innerHTML = "";
     editFieldsDiv.classList.add("hidden");
+    dynamicFieldsContainer.innerHTML = "";
 
     loadUsersTable(currentTableName);
   } catch (err) {
