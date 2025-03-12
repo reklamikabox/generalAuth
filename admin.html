@@ -72,6 +72,7 @@
 
           <h3>Редактировать пользователя</h3>
           <form id="editUserForm">
+            <!-- Поле для ввода username, по которому ищем пользователя -->
             <input
               type="text"
               id="editUsername"
@@ -79,20 +80,29 @@
               required
             />
             <button type="button" id="loadUserBtn">Загрузить данные</button>
+
+            <!-- Ниже скрытая область, где будет как старая логика (закомментирована), так и новая динамическая -->
             <div id="editFields" class="hidden">
+
+              <!-- *** СТАРАЯ ЛОГИКА (закомментирована) ***
               <input
                 type="password"
                 id="editPassword"
                 placeholder="Новый пароль (если нужно)"
               />
-              <label
-                >Дата создания:
+              <label>
+                Дата создания:
                 <input type="date" id="editCreated" readonly />
               </label>
               <label>
                 Активен:
                 <input type="checkbox" id="editActive" />
               </label>
+              *** КОНЕЦ СТАРОЙ ЛОГИКИ *** -->
+
+              <!-- НОВАЯ ЛОГИКА: динамические поля -->
+              <div id="dynamicFieldsContainer"></div>
+
               <button type="submit">Сохранить</button>
               <button type="button" id="deleteUserBtn">Удалить</button>
             </div>
