@@ -8,8 +8,8 @@ function decrypt(encryptedStr) {
   return atob(encryptedStr);
 }
 
-const supabaseUrl = decrypt(encryptedSupabaseUrl);
-const supabaseKey = decrypt(encryptedSupabaseKey);
+let supabaseUrl = decrypt(encryptedSupabaseUrl);
+let supabaseKey = decrypt(encryptedSupabaseKey);
 supabaseUrl = "https://ifxxrtmblrhrdhhnyynq.supabase.co/";
 supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeHhydG1ibHJocmRoaG55eW5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MzU3MDYsImV4cCI6MjA1NTIxMTcwNn0.Oho8ZMoeoIbUMR3oY0y0VLGvJgN9TS6tAYK1dPCSWfI";
 const adminPassword = decrypt(encryptedAdminPassword);
