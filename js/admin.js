@@ -10,6 +10,7 @@ function decrypt(encryptedStr) {
 
 const supabaseUrl = decrypt(encryptedSupabaseUrl);
 const supabaseKey = decrypt(encryptedSupabaseKey);
+console.log(supabaseUrl, supabaseKey);
 const adminPassword = decrypt(encryptedAdminPassword);
 
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
