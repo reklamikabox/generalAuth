@@ -1,46 +1,31 @@
-// js/productLogin.js
-
-// Примеры "зашифрованных" строк (здесь — base64).
-// Ниже будет функция decrypt, которая расшифрует их.
 const encryptedSupabaseUrl =
-  "aHR0cHM6Ly9sY2ZjZXFtamp2enZ3aGR0dHVpaS5zdXBhYmFzZS5jbw==";
+  "aHR0cHM6Ly9pZnh4cnRtYmxyaHJkaGhueXlucS5zdXBhYmFzZS5jbw==";
 const encryptedSupabaseKey =
   "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW14alptTmxjVzFxYW5aNmRuZG9aSFIwZFdscElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTXprMU5EUTFPVFVzSW1WNGNDSTZNakExTlRFeU1EVTVOWDAuMlduTjFHVlFUTzF5UFAzRGdreDVzSTJ4SUVtbXk2Y0tlMnRiRDJ2Mmd6aw==";
-// Замените на реальный зашифрованный ключ
-// (Выглядит урезанным, т.к. для примера; на практике вставьте полный base64)
 
-// Функция "расшифровки" (base64).
 function decrypt(encryptedStr) {
-  // Расшифровка base64 в JavaScript
-  // (Если нужно, используйте более безопасные методы)
   const decoded = atob(encryptedStr);
   return decoded;
 }
 
-// Реальные значения, используемые далее
 const supabaseUrl = decrypt(encryptedSupabaseUrl);
 const supabaseKey = decrypt(encryptedSupabaseKey);
 
-// Инициализируем Supabase
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// Парсим параметры из URL
 const urlParams = new URLSearchParams(window.location.search);
 const productName = urlParams.get("productName") || "Неизвестный продукт";
 const tableName = urlParams.get("tableName") || "users";
 
-// Устанавливаем заголовок на странице
 document.getElementById(
   "productTitle"
 ).textContent = `Авторизация: ${productName}`;
 
-// Элементы формы
 const loginForm = document.getElementById("loginForm");
 const usernameInput = document.getElementById("username");
 const passwordInput = document.getElementById("password");
 const messageDiv = document.getElementById("message");
 
-// Функция для получения пользователя из Supabase
 async function getUserData(username) {
   const { data, error } = await supabase
     .from(tableName)
@@ -54,7 +39,6 @@ async function getUserData(username) {
   return data;
 }
 
-// Обработчик отправки формы
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = usernameInput.value.trim();
@@ -70,7 +54,6 @@ loginForm.addEventListener("submit", async (e) => {
     if (!userData.active) {
       messageDiv.textContent = "Доступ для этого пользователя отключён.";
     } else if (password === userData.password) {
-      // Показываем данные в JSON-формате
       messageDiv.textContent = JSON.stringify(
         {
           username: userData.username,
