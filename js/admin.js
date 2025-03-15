@@ -1,7 +1,7 @@
 const encryptedSupabaseUrl =
-  "aHR0cHM6Ly9pZnh4cnRtYmxyaHJkaGhueXlucS5zdXBhYmFzZS5jbw==";
+  "aHR0cHM6Ly9pZnh4cnRtYmxyaHJkaGhueXlucS5zdXBhYmFzZS5jby8=";
 const encryptedSupabaseKey =
-  "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW14alptTmxjVzFxYW5aNmRuZG9aSFIwZFdscElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTXprMU5EUTFPVFVzSW1WNGNDSTZNakExTlRFeU1EVTVOWDAuMlduTjFHVlFUTzF5UFAzRGdreDVzSTJ4SUVtbXk2Y0tlMnRiRDJ2Mmd6aw==";
+  "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW1sbWVIaHlkRzFpYkhKb2NtUm9hRzU1ZVc1eElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTXprMk16VTNNRFlzSW1WNGNDSTZNakExTlRJeE1UY3dObjAuT2hvOFpNb2VvSWJVTVIzb1kweTBWTEd2SmdOOVRTNnRBWUsxZFBDU1dmSQ==";
 const encryptedAdminPassword = "MDQxMDA3";
 
 function decrypt(encryptedStr) {
@@ -10,8 +10,6 @@ function decrypt(encryptedStr) {
 
 let supabaseUrl = decrypt(encryptedSupabaseUrl);
 let supabaseKey = decrypt(encryptedSupabaseKey);
-supabaseUrl = "https://ifxxrtmblrhrdhhnyynq.supabase.co/";
-supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeHhydG1ibHJocmRoaG55eW5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MzU3MDYsImV4cCI6MjA1NTIxMTcwNn0.Oho8ZMoeoIbUMR3oY0y0VLGvJgN9TS6tAYK1dPCSWfI";
 const adminPassword = decrypt(encryptedAdminPassword);
 
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
