@@ -39,7 +39,7 @@ body {
 
 /* Контейнер для самой админ-панели (class="container" id="adminPanelContainer") */
 #adminPanelContainer {
-  max-width: 1200px;
+  max-width: 3000px;
 }
 
 /* Поля ввода */
