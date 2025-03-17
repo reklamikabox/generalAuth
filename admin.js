@@ -8,7 +8,7 @@ function decrypt(encryptedStr) {
 }
 
 const supabaseUrl = decrypt(encryptedSupabaseUrl);
-const supabaseKey = decrypt(encryptedSupabaseKey);
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeHhydG1ibHJocmRoaG55eW5xIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczOTYzNTcwNiwiZXhwIjoyMDU1MjExNzA2fQ.GbUSyHXkPNP86s9mIal-7UDNSWQC3Z0XE6S4pP-yHC8"
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 const adminPanelContainer = document.getElementById("adminPanelContainer");
