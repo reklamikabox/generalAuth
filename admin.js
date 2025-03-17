@@ -28,7 +28,8 @@ let currentTableName = null;
 let selectedUser = null;
 
 // Инициализация админ-панели
-function initAdminPanel() {
+async function initAdminPanel() {
+  await supabase.auth.signInAnonymously(); // Добавить анонимную аутентификацию
   loadProductsIntoSelect();
 }
 
