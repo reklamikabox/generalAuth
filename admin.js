@@ -29,16 +29,6 @@ let selectedUser = null;
 
 // Инициализация админ-панели
 async function initAdminPanel() {
-  // Предположим, что у вас уже есть JWT токен
-  const jwtToken = 'qBGbluVLt87LMxwyECtDayQ5rRSW8iNXOBZiOt5qJXtjtn4L06GKxxTrjRBqC/qf6/1IfnJ6AatwcH7Ylp79ug==';
-  
-  const { user, error } = await supabase.auth.setAuth(jwtToken);
-  
-  if (error) {
-      console.error('Ошибка при входе:', error.message);
-  } else {
-      console.log('Пользователь успешно вошел:', user);
-  }
   loadProductsIntoSelect();
 }
 
