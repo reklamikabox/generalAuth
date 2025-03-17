@@ -29,7 +29,6 @@ let selectedUser = null;
 
 // Инициализация админ-панели
 async function initAdminPanel() {
-  await supabase.auth.signInAnonymously(); // Добавить анонимную аутентификацию
   loadProductsIntoSelect();
 }
 
