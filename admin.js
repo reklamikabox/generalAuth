@@ -1,7 +1,28 @@
 const encryptedSupabaseUrl =
   "aHR0cHM6Ly9pZnh4cnRtYmxyaHJkaGhueXlucS5zdXBhYmFzZS5jby8=";
-const encryptedSupabaseKey =
-  "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW1sbWVIaHlkRzFpYkhKb2NtUm9hRzU1ZVc1eElpd2ljbTlzWlNJNkluTmxjblpwWTJWZmNtOXNaU0lzSW1saGRDSTZNVGN6T1RZek5UY3dOaXdpWlhod0lqb3lNRFUxTWpFeE56QTJmUS5HYlVTeUhYa1BOUDg2czltSWFsLTdVRE5TV1FDM1owWEU2UzRwUC15SEM4";
+
+let encryptedSupabaseKey;
+
+do {
+  encryptedSupabaseKey = prompt(
+    "Введите ваш зашифрованный ключ Supabase:",
+    ""
+  );
+} while (
+  encryptedSupabaseKey &&
+  !encryptedSupabaseKey.match(
+    /^[A-Za-z0-9+/]+={0,2}$/
+  )
+);
+
+if (encryptedSupabaseKey) {
+  // Код для работы с ключом
+  console.log("Ключ получен");
+} else {
+  alert("Для работы необходимо ввести валидный ключ Supabase!");
+  throw new Error("Supabase key not provided");
+}
+
 
 function decrypt(encryptedStr) {
   return atob(encryptedStr);
