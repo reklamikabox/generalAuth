@@ -146,3 +146,12 @@ input[type="date"] {
 .add-user-btn:hover {
   background-color: #218838;
 }
+
+/* --- Новая часть для фильтрации по тарифу --- */
+.tariff-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Можно подправить отступы, чтобы лучше вписать в общий интерфейс */
+  margin-right: auto; /* чтобы поле фильтра "ушло" влево */
+}

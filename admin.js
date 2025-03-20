@@ -1,18 +1,17 @@
+// admin.js
+
+// Зашифрованный URL
 const encryptedSupabaseUrl =
   "aHR0cHM6Ly9pZnh4cnRtYmxyaHJkaGhueXlucS5zdXBhYmFzZS5jby8=";
 
+// Переменная с зашифрованным ключом
 let encryptedSupabaseKey;
 
 do {
-  encryptedSupabaseKey = prompt(
-    "Введите ваш зашифрованный ключ Supabase:",
-    ""
-  );
+  encryptedSupabaseKey = prompt("Введите ваш зашифрованный ключ Supabase:", "");
 } while (
   encryptedSupabaseKey &&
-  !encryptedSupabaseKey.match(
-    /^[A-Za-z0-9+/]+={0,2}$/
-  )
+  !encryptedSupabaseKey.match(/^[A-Za-z0-9+/]+={0,2}$/)
 );
 
 if (encryptedSupabaseKey) {
@@ -23,7 +22,7 @@ if (encryptedSupabaseKey) {
   throw new Error("Supabase key not provided");
 }
 
-
+// Функция расшифровки
 function decrypt(encryptedStr) {
   return atob(encryptedStr);
 }
@@ -32,6 +31,7 @@ const supabaseUrl = decrypt(encryptedSupabaseUrl);
 const supabaseKey = decrypt(encryptedSupabaseKey);
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+// Основные DOM-элементы
 const adminPanelContainer = document.getElementById("adminPanelContainer");
 const productSelect = document.getElementById("productSelect");
 const logoutAdminBtn = document.getElementById("logoutAdminBtn");
@@ -45,6 +45,11 @@ const dynamicFieldsContainer = document.getElementById(
 const deleteUserBtn = document.getElementById("deleteUserBtn");
 const editUserForm = document.getElementById("editUserForm");
 
+// Новый DOM-элемент для фильтра
+const tariffFilterInput = document.getElementById("tariffFilterInput");
+const tariffFilterBtn = document.getElementById("tariffFilterBtn");
+
+// Глобальные переменные
 let currentTableName = null;
 let selectedUser = null;
 
@@ -69,10 +74,13 @@ async function loadProductsIntoSelect() {
     });
 
     currentTableName = productSelect.value;
+    // При первой загрузке показываем все записи без фильтра
     loadUsersTable(currentTableName);
 
     productSelect.addEventListener("change", () => {
       currentTableName = productSelect.value;
+      // Сбрасываем поле фильтра при смене таблицы
+      tariffFilterInput.value = "";
       loadUsersTable(currentTableName);
     });
   } catch (err) {
@@ -80,12 +88,52 @@ async function loadProductsIntoSelect() {
   }
 }
 
-async function loadUsersTable(tableName) {
+/**
+ * Загрузка данных пользователей из указанной таблицы.
+ * @param {string} tableName - Название таблицы.
+ * @param {string} [tariffFilterValue=""] - Значение фильтра по тарифу.
+ */
+async function loadUsersTable(tableName, tariffFilterValue = "") {
   try {
-    const { data, error } = await supabase.from(tableName).select();
+    // Начинаем формировать запрос
+    let query = supabase.from(tableName).select();
 
-    if (error) throw error;
+    // Если есть что фильтровать, пробуем применить фильтр по тарифу
+    if (tariffFilterValue) {
+      // Применяем ilike для поиска вхождений (частичное совпадение, регистронезависимое)
+      // Если столбца tariff нет – может возникнуть ошибка, обрабатываем её ниже
+      query = query.ilike("tariff", `%${tariffFilterValue}%`);
+    }
 
+    let { data, error } = await query;
+
+    // Если возникла ошибка, возможно столбца 'tariff' нет в таблице
+    if (error) {
+      if (
+        error.message &&
+        error.message.toLowerCase().includes('column "tariff" does not exist')
+      ) {
+        console.warn(
+          "Колонка 'tariff' не найдена, выполняем запрос без фильтра..."
+        );
+        // Делаем "fallback" – запрос без учёта фильтра
+        const fallbackQuery = supabase.from(tableName).select();
+        const { data: fallbackData, error: fallbackError } =
+          await fallbackQuery;
+        if (!fallbackError) {
+          data = fallbackData;
+          error = null;
+        } else {
+          console.error("Ошибка при загрузке (fallback):", fallbackError);
+          return;
+        }
+      } else {
+        // Если ошибка другая, пробрасываем дальше
+        throw error;
+      }
+    }
+
+    // Теперь data – либо отфильтрованные, либо все данные (если фильтр не применялся или не было колонки)
     usersTableBody.innerHTML = "";
     const thead = usersTable.querySelector("thead");
     thead.innerHTML = "";
@@ -100,7 +148,7 @@ async function loadUsersTable(tableName) {
       return;
     }
 
-    // Create table header
+    // Создаем заголовок таблицы (шапку)
     const columns = Object.keys(data[0]);
     const headerRow = document.createElement("tr");
     columns.forEach((col) => {
@@ -110,7 +158,7 @@ async function loadUsersTable(tableName) {
     });
     thead.appendChild(headerRow);
 
-    // Create table rows
+    // Заполняем строки данными
     data.forEach((row) => {
       const tr = document.createElement("tr");
       tr.classList.add("clickable-row");
@@ -130,6 +178,7 @@ async function loadUsersTable(tableName) {
   }
 }
 
+// Показываем модальное окно редактирования
 function showEditModal(userData) {
   selectedUser = userData;
   dynamicFieldsContainer.innerHTML = "";
@@ -161,7 +210,7 @@ function closeModal() {
   dynamicFieldsContainer.innerHTML = "";
 }
 
-// Обработчики событий
+// Обработчики событий (модальное окно редактирования)
 modalClose.addEventListener("click", closeModal);
 cancelEditBtn.addEventListener("click", closeModal);
 
@@ -185,7 +234,7 @@ editUserForm.addEventListener("submit", async (e) => {
     if (error) throw error;
 
     closeModal();
-    loadUsersTable(currentTableName);
+    loadUsersTable(currentTableName, tariffFilterInput.value.trim());
   } catch (err) {
     console.error("Ошибка при обновлении пользователя:", err);
   }
@@ -204,14 +253,21 @@ deleteUserBtn.addEventListener("click", async () => {
     if (error) throw error;
 
     closeModal();
-    loadUsersTable(currentTableName);
+    loadUsersTable(currentTableName, tariffFilterInput.value.trim());
   } catch (err) {
     console.error("Ошибка при удалении пользователя:", err);
   }
 });
 
+// Кнопка "Выйти"
 logoutAdminBtn.addEventListener("click", () => {
   window.location.href = "index.html";
+});
+
+// --- Новая логика для кнопки фильтра по тарифу ---
+tariffFilterBtn.addEventListener("click", () => {
+  const filterValue = tariffFilterInput.value.trim();
+  loadUsersTable(currentTableName, filterValue);
 });
 
 // Инициализация при загрузке
@@ -227,7 +283,7 @@ const newUsername = document.getElementById("newUsername");
 const newPassword = document.getElementById("newPassword");
 const newActive = document.getElementById("newActive");
 
-// Добавить обработчики после инициализации
+// Добавить обработчики после инициализации (модальное окно добавления пользователя)
 addUserBtn.addEventListener("click", () => {
   addUserModal.style.display = "flex";
 });
@@ -263,7 +319,9 @@ addUserForm.addEventListener("submit", async (e) => {
     newUsername.value = "";
     newPassword.value = "";
     newActive.checked = true;
-    loadUsersTable(currentTableName);
+
+    // После добавления пользователя – перезагружаем таблицу с учётом текущего фильтра
+    loadUsersTable(currentTableName, tariffFilterInput.value.trim());
   } catch (err) {
     console.error("Ошибка при создании пользователя:", err);
     alert("Ошибка при создании пользователя");

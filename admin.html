@@ -10,9 +10,23 @@
       <div id="productsHeader">
         <label for="productSelect">Выберите продукт:</label>
         <select id="productSelect"></select>
+
+        <!-- Кнопка добавления пользователя -->
         <button class="add-user-btn" id="addUserBtn">
           + Добавить пользователя
         </button>
+
+        <!-- Новый блок фильтрации по тарифу -->
+        <div class="tariff-filter-container">
+          <label for="tariffFilterInput">Фильтр по тарифу:</label>
+          <input
+            type="text"
+            id="tariffFilterInput"
+            placeholder="Введите название тарифа"
+          />
+          <button id="tariffFilterBtn">Применить</button>
+        </div>
+
         <button id="logoutAdminBtn">Выйти</button>
       </div>
 
@@ -76,7 +90,9 @@
       </div>
     </div>
 
+    <!-- Подключение Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Основной скрипт админки -->
     <script src="admin.js"></script>
   </body>
 </html>
