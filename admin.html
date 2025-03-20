@@ -10,13 +10,10 @@
       <div id="productsHeader">
         <label for="productSelect">Выберите продукт:</label>
         <select id="productSelect"></select>
-
-        <!-- Кнопка добавления пользователя -->
         <button class="add-user-btn" id="addUserBtn">
           + Добавить пользователя
         </button>
 
-        <!-- Новый блок фильтрации по тарифу -->
         <div class="tariff-filter-container">
           <label for="tariffFilterInput">Фильтр по тарифу:</label>
           <input
@@ -33,18 +30,13 @@
       <div class="table-container">
         <table id="usersTable">
           <thead>
-            <tr>
-              <!-- Columns will be dynamically populated -->
-            </tr>
+            <tr></tr>
           </thead>
-          <tbody>
-            <!-- Data will be dynamically populated -->
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
 
-    <!-- Edit Modal -->
     <div class="modal-overlay" id="editModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -62,7 +54,6 @@
       </div>
     </div>
 
-    <!-- Add User Modal -->
     <div class="modal-overlay" id="addUserModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -90,9 +81,7 @@
       </div>
     </div>
 
-    <!-- Подключение Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Основной скрипт админки -->
     <script src="admin.js"></script>
   </body>
 </html>
